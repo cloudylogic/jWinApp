@@ -6,9 +6,12 @@
 package my.jwinapp;
 import clsrestapi.AboutUs;
 import clsrestapi.ContactInfo;
+import clsrestapi.OurWork;
+import clsrestapi.ShowCaseVideo;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Desktop;
 import java.net.URL;
+import java.util.ListIterator;
 
 
 /**
@@ -17,8 +20,9 @@ import java.net.URL;
  */
 public class jWinAppUI extends javax.swing.JFrame {
 
-    private AboutUs aboutus;
+    private AboutUs aboutUs;
     private ContactInfo contactInfo;
+    private OurWork ourWork;
 
     private void logMsg(String msg){
         System.out.println(msg);
@@ -30,12 +34,13 @@ public class jWinAppUI extends javax.swing.JFrame {
         initComponents();
         loadAbout();
         loadContact();
+        loadOurWork();
     }
     
     private void loadAbout(){
-        aboutus = new AboutUs().load();
+        aboutUs = new AboutUs().load();
         
-        jTextAreaAbout.append(aboutus.apiObj.aboutus.replace(". ", "." + System.lineSeparator() + System.lineSeparator()));
+        jTextAreaAbout.append(aboutUs.apiObj.aboutus.replace(". ", "." + System.lineSeparator() + System.lineSeparator()));
         
     }
     
@@ -54,6 +59,22 @@ public class jWinAppUI extends javax.swing.JFrame {
         jTextAreaContact.append(sb.toString());        
     }
 
+    private void loadOurWork(){
+        ourWork = new OurWork().load();
+        
+        Object columnNames[] = { "Thumbnail", "Description" };
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+
+        for(ListIterator<ShowCaseVideo> iter = ourWork.apiObj.videoList.listIterator(); iter.hasNext();){
+            ShowCaseVideo video = iter.next();
+            Object rowData[] = {"", "<html><strong>" + video.type + "</strong><br>" + video.title};
+            
+            model.addRow(rowData);
+        }
+        jTableOurWork.setModel(model);
+        jTableOurWork.setRowHeight(50);
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -67,17 +88,16 @@ public class jWinAppUI extends javax.swing.JFrame {
         jPanelHome = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         jTextArea3 = new javax.swing.JTextArea();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
         jLabelCloudyLogic = new javax.swing.JLabel();
         jLabelGitHub = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
+        jLabelRefApp = new javax.swing.JLabel();
+        jLabelFB = new javax.swing.JLabel();
+        jLabelTwitter = new javax.swing.JLabel();
+        jLabelInstagram = new javax.swing.JLabel();
+        jLabelVimeo = new javax.swing.JLabel();
         jPanelOurWork = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jButton2 = new javax.swing.JButton();
+        jTableOurWork = new javax.swing.JTable();
         jPanelAboutUs = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextAreaAbout = new javax.swing.JTextArea();
@@ -91,34 +111,6 @@ public class jWinAppUI extends javax.swing.JFrame {
         jTextArea3.setColumns(20);
         jTextArea3.setRows(5);
         jScrollPane4.setViewportView(jTextArea3);
-
-        jButton4.setText("Facebook");
-        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                openFB(evt);
-            }
-        });
-
-        jButton5.setText("Twitter");
-        jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                openTwitter(evt);
-            }
-        });
-
-        jButton6.setText("Instagram");
-        jButton6.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                openInstagram(evt);
-            }
-        });
-
-        jButton7.setText("Vimeo");
-        jButton7.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                openVimeo(evt);
-            }
-        });
 
         jLabelCloudyLogic.setText("<html><a href=\"https://cloudylogic.com\">Cloudy Logic Studios, LLC</a>.");
         jLabelCloudyLogic.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -134,8 +126,45 @@ public class jWinAppUI extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
-        jLabel1.setText("Java Reference App");
+        jLabelRefApp.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
+        jLabelRefApp.setText("Java Reference App");
+
+        jLabelFB.setIcon(new javax.swing.ImageIcon(getClass().getResource("/my/jwinapp/social-fb3@2x.png"))); // NOI18N
+        jLabelFB.setText("Facebook");
+        jLabelFB.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jLabelFB.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                openFB(evt);
+            }
+        });
+
+        jLabelTwitter.setIcon(new javax.swing.ImageIcon(getClass().getResource("/my/jwinapp/social-tw3@2x.png"))); // NOI18N
+        jLabelTwitter.setText("Twitter");
+        jLabelTwitter.setMaximumSize(new java.awt.Dimension(128, 162));
+        jLabelTwitter.setMinimumSize(new java.awt.Dimension(128, 162));
+        jLabelTwitter.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                openTwitter(evt);
+            }
+        });
+
+        jLabelInstagram.setText("Instagram");
+        jLabelInstagram.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                openInstagram(evt);
+            }
+        });
+
+        jLabelVimeo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/my/jwinapp/social-vi3@2x.png"))); // NOI18N
+        jLabelVimeo.setText("Vimeo");
+        jLabelVimeo.setMaximumSize(new java.awt.Dimension(110, 162));
+        jLabelVimeo.setMinimumSize(new java.awt.Dimension(110, 162));
+        jLabelVimeo.setPreferredSize(new java.awt.Dimension(128, 169));
+        jLabelVimeo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                openVimeo(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanelHomeLayout = new javax.swing.GroupLayout(jPanelHome);
         jPanelHome.setLayout(jPanelHomeLayout);
@@ -143,21 +172,20 @@ public class jWinAppUI extends javax.swing.JFrame {
             jPanelHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelHomeLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanelHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanelHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 545, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanelHomeLayout.createSequentialGroup()
-                            .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(jPanelHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanelHomeLayout.createSequentialGroup()
+                        .addComponent(jLabelFB, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabelTwitter, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabelInstagram, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabelVimeo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 545, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanelHomeLayout.createSequentialGroup()
                         .addComponent(jLabelCloudyLogic, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel1)
+                        .addComponent(jLabelRefApp)
                         .addGap(18, 18, 18)
                         .addComponent(jLabelGitHub, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -167,25 +195,24 @@ public class jWinAppUI extends javax.swing.JFrame {
             .addGroup(jPanelHomeLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(23, 23, 23)
                 .addGroup(jPanelHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, 105, Short.MAX_VALUE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabelFB, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabelInstagram, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabelTwitter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabelVimeo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanelHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelCloudyLogic, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabelGitHub, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
+                    .addComponent(jLabelRefApp))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jButton7.getAccessibleContext().setAccessibleName("Vimeo");
-
         jTabbedPane1.addTab("Home", jPanelHome);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jTableOurWork.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
+        jTableOurWork.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null},
                 {null, null},
@@ -212,19 +239,12 @@ public class jWinAppUI extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jTable1.getTableHeader().setReorderingAllowed(false);
-        jScrollPane2.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setResizable(false);
-            jTable1.getColumnModel().getColumn(1).setResizable(false);
+        jTableOurWork.getTableHeader().setReorderingAllowed(false);
+        jScrollPane2.setViewportView(jTableOurWork);
+        if (jTableOurWork.getColumnModel().getColumnCount() > 0) {
+            jTableOurWork.getColumnModel().getColumn(0).setResizable(false);
+            jTableOurWork.getColumnModel().getColumn(1).setResizable(false);
         }
-
-        jButton2.setText("jButton2");
-        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton2MouseClicked(evt);
-            }
-        });
 
         javax.swing.GroupLayout jPanelOurWorkLayout = new javax.swing.GroupLayout(jPanelOurWork);
         jPanelOurWork.setLayout(jPanelOurWorkLayout);
@@ -234,19 +254,13 @@ public class jWinAppUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE)
                 .addContainerGap())
-            .addGroup(jPanelOurWorkLayout.createSequentialGroup()
-                .addGap(228, 228, 228)
-                .addComponent(jButton2)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanelOurWorkLayout.setVerticalGroup(
             jPanelOurWorkLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelOurWorkLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(36, 36, 36)
-                .addComponent(jButton2)
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 489, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         jTabbedPane1.addTab("Our Work", jPanelOurWork);
@@ -273,7 +287,7 @@ public class jWinAppUI extends javax.swing.JFrame {
             jPanelAboutUsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelAboutUsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 396, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 465, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -307,7 +321,7 @@ public class jWinAppUI extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelContactLayout.createSequentialGroup()
                 .addGap(62, 62, 62)
                 .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 98, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 167, Short.MAX_VALUE)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -320,8 +334,7 @@ public class jWinAppUI extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1)
-                .addContainerGap())
+                .addComponent(jTabbedPane1))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -334,18 +347,6 @@ public class jWinAppUI extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
-        // TODO add your handling code here:
-        Object rowData1[] = { "Row1-Column1", "Row1-Column2" };
-        Object rowData2[] = { "Row2-Column1", "Row2-Column2" };
-
-        Object columnNames[] = { "Column One", "Column Two" };
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
-        model.addRow(rowData1);
-        model.addRow(rowData2);
-        jTable1.setModel(model);
-    }//GEN-LAST:event_jButton2MouseClicked
 
     private void openURL(String url){
         try {
@@ -432,15 +433,14 @@ public class jWinAppUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabelCloudyLogic;
+    private javax.swing.JLabel jLabelFB;
     private javax.swing.JLabel jLabelGitHub;
+    private javax.swing.JLabel jLabelInstagram;
+    private javax.swing.JLabel jLabelRefApp;
+    private javax.swing.JLabel jLabelTwitter;
+    private javax.swing.JLabel jLabelVimeo;
     private javax.swing.JPanel jPanelAboutUs;
     private javax.swing.JPanel jPanelContact;
     private javax.swing.JPanel jPanelHome;
@@ -450,7 +450,7 @@ public class jWinAppUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTableOurWork;
     private javax.swing.JTextArea jTextArea3;
     private javax.swing.JTextArea jTextAreaAbout;
     private javax.swing.JTextArea jTextAreaContact;
