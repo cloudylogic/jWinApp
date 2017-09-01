@@ -8,6 +8,8 @@ import clsrestapi.AboutUs;
 import clsrestapi.ContactInfo;
 import clsrestapi.OurWork;
 import clsrestapi.ShowCaseVideo;
+import javax.swing.JTextField;
+import javax.swing.DefaultCellEditor;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Desktop;
 import java.net.URL;
@@ -32,6 +34,11 @@ public class jWinAppUI extends javax.swing.JFrame {
      */
     public jWinAppUI() {
         initComponents();
+        // I'm designing the video details panel in NetBeans, but I don't want it shown
+        // as a Tab in the GUI, so remove it! I could just go steal the code after it's designed
+        // and put it here or in a method? Hmmm. TODO. That would probably be better, since I need
+        // to construct these on the fly as they click on a video in the table.
+        jTabbedPaneMyApp.remove(jPanelVideoDetails);
         loadAbout();
         loadContact();
         loadOurWork();
@@ -40,7 +47,7 @@ public class jWinAppUI extends javax.swing.JFrame {
     private void loadAbout(){
         aboutUs = new AboutUs().load();
         
-        jTextAreaAbout.append(aboutUs.apiObj.aboutus.replace(". ", "." + System.lineSeparator() + System.lineSeparator()));
+        jTextAreaAboutUs.append(aboutUs.apiObj.aboutus.replace(". ", "." + System.lineSeparator() + System.lineSeparator()));
         
     }
     
@@ -63,16 +70,43 @@ public class jWinAppUI extends javax.swing.JFrame {
         ourWork = new OurWork().load();
         
         Object columnNames[] = { "Thumbnail", "Description" };
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0){
+            // Return the class of the column so the correct renderer is used
+            @Override
+            public Class getColumnClass(int column){
+                return getValueAt(0,column).getClass();
+            }
+            // This prevents any editing of the contents
+            boolean[] canEdit = new boolean [] {
+                //Col 0,  Col 1
+                false,    true
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        };
 
         for(ListIterator<ShowCaseVideo> iter = ourWork.apiObj.videoList.listIterator(); iter.hasNext();){
             ShowCaseVideo video = iter.next();
-            Object rowData[] = {"", "<html><strong>" + video.type + "</strong><br>" + video.title};
+            Object icon = new javax.swing.ImageIcon(getClass().getResource("/my/jwinapp/"+video.thumb+".png")); // NOI18N
+            Object rowData[] = {icon, "<html><strong>" + video.type + "</strong><br>" + video.title};
+            //jTableOurWork.setValueAt(icon, 0, 0);
             
             model.addRow(rowData);
         }
+        JTextField tf = new JTextField();
+        tf.setEditable(false);
+        DefaultCellEditor editor = new DefaultCellEditor(tf);
+        jTableOurWork.setDefaultEditor(Object.class, editor);
+        
         jTableOurWork.setModel(model);
-        jTableOurWork.setRowHeight(50);
+        jTableOurWork.getTableHeader().setUI(null);    // Disable the column headings
+        // Set the preferred width for the two columns
+        jTableOurWork.getColumnModel().getColumn(0).setPreferredWidth(200);
+        jTableOurWork.getColumnModel().getColumn(1).setPreferredWidth(400);
+        // Set the height for the rows (so the image fits in nicely, they are 100px)
+        jTableOurWork.setRowHeight(110);
     }
 
     /**
@@ -84,10 +118,10 @@ public class jWinAppUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jTabbedPaneMyApp = new javax.swing.JTabbedPane();
         jPanelHome = new javax.swing.JPanel();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        jTextArea3 = new javax.swing.JTextArea();
+        jScrollPaneHome = new javax.swing.JScrollPane();
+        jTextAreaHome = new javax.swing.JTextArea();
         jLabelCloudyLogic = new javax.swing.JLabel();
         jLabelGitHub = new javax.swing.JLabel();
         jLabelRefApp = new javax.swing.JLabel();
@@ -96,21 +130,27 @@ public class jWinAppUI extends javax.swing.JFrame {
         jLabelInstagram = new javax.swing.JLabel();
         jLabelVimeo = new javax.swing.JLabel();
         jPanelOurWork = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
+        jScrollPaneOurWork = new javax.swing.JScrollPane();
         jTableOurWork = new javax.swing.JTable();
         jPanelAboutUs = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextAreaAbout = new javax.swing.JTextArea();
+        jScrollPaneAboutUs = new javax.swing.JScrollPane();
+        jTextAreaAboutUs = new javax.swing.JTextArea();
         jPanelContact = new javax.swing.JPanel();
-        jScrollPane3 = new javax.swing.JScrollPane();
+        jScrollPaneContact = new javax.swing.JScrollPane();
         jTextAreaContact = new javax.swing.JTextArea();
-        jLabel2 = new javax.swing.JLabel();
+        jLabelGoogleMap = new javax.swing.JLabel();
+        jPanelVideoDetails = new javax.swing.JPanel();
+        jLabelVideoDetailsPlayer = new javax.swing.JLabel();
+        jScrollPaneVideoDetails = new javax.swing.JScrollPane();
+        jTextAreaVideoDetails = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMaximumSize(new java.awt.Dimension(584, 560));
+        setMinimumSize(new java.awt.Dimension(584, 560));
 
-        jTextArea3.setColumns(20);
-        jTextArea3.setRows(5);
-        jScrollPane4.setViewportView(jTextArea3);
+        jTextAreaHome.setColumns(20);
+        jTextAreaHome.setRows(5);
+        jScrollPaneHome.setViewportView(jTextAreaHome);
 
         jLabelCloudyLogic.setText("<html><a href=\"https://cloudylogic.com\">Cloudy Logic Studios, LLC</a>.");
         jLabelCloudyLogic.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -181,7 +221,7 @@ public class jWinAppUI extends javax.swing.JFrame {
                         .addComponent(jLabelInstagram, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabelVimeo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 545, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPaneHome, javax.swing.GroupLayout.PREFERRED_SIZE, 545, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanelHomeLayout.createSequentialGroup()
                         .addComponent(jLabelCloudyLogic, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -194,7 +234,7 @@ public class jWinAppUI extends javax.swing.JFrame {
             jPanelHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelHomeLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPaneHome, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(23, 23, 23)
                 .addGroup(jPanelHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabelFB, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -209,38 +249,32 @@ public class jWinAppUI extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Home", jPanelHome);
+        jTabbedPaneMyApp.addTab("Home", jPanelHome);
 
         jTableOurWork.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         jTableOurWork.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null},
                 {null, null}
             },
             new String [] {
                 "", ""
             }
         ) {
-            Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.String.class
-            };
             boolean[] canEdit = new boolean [] {
                 false, false
             };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
         jTableOurWork.getTableHeader().setReorderingAllowed(false);
-        jScrollPane2.setViewportView(jTableOurWork);
+        jTableOurWork.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableOurWorkMouseClicked(evt);
+            }
+        });
+        jScrollPaneOurWork.setViewportView(jTableOurWork);
         if (jTableOurWork.getColumnModel().getColumnCount() > 0) {
             jTableOurWork.getColumnModel().getColumn(0).setResizable(false);
             jTableOurWork.getColumnModel().getColumn(1).setResizable(false);
@@ -252,27 +286,27 @@ public class jWinAppUI extends javax.swing.JFrame {
             jPanelOurWorkLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelOurWorkLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE)
+                .addComponent(jScrollPaneOurWork, javax.swing.GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanelOurWorkLayout.setVerticalGroup(
             jPanelOurWorkLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelOurWorkLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 489, Short.MAX_VALUE)
+                .addComponent(jScrollPaneOurWork, javax.swing.GroupLayout.DEFAULT_SIZE, 489, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Our Work", jPanelOurWork);
+        jTabbedPaneMyApp.addTab("Our Work", jPanelOurWork);
 
         jPanelAboutUs.setBorder(javax.swing.BorderFactory.createTitledBorder("AboutUs"));
 
-        jTextAreaAbout.setColumns(20);
-        jTextAreaAbout.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
-        jTextAreaAbout.setLineWrap(true);
-        jTextAreaAbout.setRows(5);
-        jTextAreaAbout.setWrapStyleWord(true);
-        jScrollPane1.setViewportView(jTextAreaAbout);
+        jTextAreaAboutUs.setColumns(20);
+        jTextAreaAboutUs.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
+        jTextAreaAboutUs.setLineWrap(true);
+        jTextAreaAboutUs.setRows(5);
+        jTextAreaAboutUs.setWrapStyleWord(true);
+        jScrollPaneAboutUs.setViewportView(jTextAreaAboutUs);
 
         javax.swing.GroupLayout jPanelAboutUsLayout = new javax.swing.GroupLayout(jPanelAboutUs);
         jPanelAboutUs.setLayout(jPanelAboutUsLayout);
@@ -280,26 +314,26 @@ public class jWinAppUI extends javax.swing.JFrame {
             jPanelAboutUsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelAboutUsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 533, Short.MAX_VALUE)
+                .addComponent(jScrollPaneAboutUs, javax.swing.GroupLayout.DEFAULT_SIZE, 533, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanelAboutUsLayout.setVerticalGroup(
             jPanelAboutUsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelAboutUsLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 465, Short.MAX_VALUE)
+                .addComponent(jScrollPaneAboutUs, javax.swing.GroupLayout.DEFAULT_SIZE, 465, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("About Us", jPanelAboutUs);
+        jTabbedPaneMyApp.addTab("About Us", jPanelAboutUs);
         jPanelAboutUs.getAccessibleContext().setAccessibleName("");
 
         jTextAreaContact.setColumns(20);
         jTextAreaContact.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         jTextAreaContact.setRows(5);
-        jScrollPane3.setViewportView(jTextAreaContact);
+        jScrollPaneContact.setViewportView(jTextAreaContact);
 
-        jLabel2.setText("Put a Google map in this area, when you click it launch a big version");
+        jLabelGoogleMap.setText("Put a Google map in this area, when you click it launch a big version");
 
         javax.swing.GroupLayout jPanelContactLayout = new javax.swing.GroupLayout(jPanelContact);
         jPanelContact.setLayout(jPanelContactLayout);
@@ -309,10 +343,10 @@ public class jWinAppUI extends javax.swing.JFrame {
                 .addGroup(jPanelContactLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanelContactLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE))
+                        .addComponent(jScrollPaneContact, javax.swing.GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE))
                     .addGroup(jPanelContactLayout.createSequentialGroup()
                         .addGap(54, 54, 54)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 466, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabelGoogleMap, javax.swing.GroupLayout.PREFERRED_SIZE, 466, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -320,13 +354,44 @@ public class jWinAppUI extends javax.swing.JFrame {
             jPanelContactLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelContactLayout.createSequentialGroup()
                 .addGap(62, 62, 62)
-                .addComponent(jLabel2)
+                .addComponent(jLabelGoogleMap)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 167, Short.MAX_VALUE)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPaneContact, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Contact", jPanelContact);
+        jTabbedPaneMyApp.addTab("Contact", jPanelContact);
+
+        jLabelVideoDetailsPlayer.setText("Hi There!");
+
+        jTextAreaVideoDetails.setColumns(20);
+        jTextAreaVideoDetails.setRows(5);
+        jTextAreaVideoDetails.setText("Here is some text");
+        jScrollPaneVideoDetails.setViewportView(jTextAreaVideoDetails);
+
+        javax.swing.GroupLayout jPanelVideoDetailsLayout = new javax.swing.GroupLayout(jPanelVideoDetails);
+        jPanelVideoDetails.setLayout(jPanelVideoDetailsLayout);
+        jPanelVideoDetailsLayout.setHorizontalGroup(
+            jPanelVideoDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelVideoDetailsLayout.createSequentialGroup()
+                .addGroup(jPanelVideoDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanelVideoDetailsLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabelVideoDetailsPlayer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jScrollPaneVideoDetails, javax.swing.GroupLayout.DEFAULT_SIZE, 551, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanelVideoDetailsLayout.setVerticalGroup(
+            jPanelVideoDetailsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelVideoDetailsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabelVideoDetailsPlayer, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPaneVideoDetails, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jTabbedPaneMyApp.addTab("", jPanelVideoDetails);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -334,16 +399,16 @@ public class jWinAppUI extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1))
+                .addComponent(jTabbedPaneMyApp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1))
+                .addComponent(jTabbedPaneMyApp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        jTabbedPane1.getAccessibleContext().setAccessibleName("");
+        jTabbedPaneMyApp.getAccessibleContext().setAccessibleName("");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -397,6 +462,13 @@ public class jWinAppUI extends javax.swing.JFrame {
         openURL("https://github.com/kenlowrie/jWinApp");
     }//GEN-LAST:event_openGitHub
 
+    private void jTableOurWorkMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableOurWorkMouseClicked
+        // TODO add your handling code here:
+        //jTableOurWork.updateUI();
+        jScrollPaneOurWork.setViewportView(jPanelVideoDetails);
+        //TODO: remove this
+    }//GEN-LAST:event_jTableOurWorkMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -433,26 +505,30 @@ public class jWinAppUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabelCloudyLogic;
     private javax.swing.JLabel jLabelFB;
     private javax.swing.JLabel jLabelGitHub;
+    private javax.swing.JLabel jLabelGoogleMap;
     private javax.swing.JLabel jLabelInstagram;
     private javax.swing.JLabel jLabelRefApp;
     private javax.swing.JLabel jLabelTwitter;
+    private javax.swing.JLabel jLabelVideoDetailsPlayer;
     private javax.swing.JLabel jLabelVimeo;
     private javax.swing.JPanel jPanelAboutUs;
     private javax.swing.JPanel jPanelContact;
     private javax.swing.JPanel jPanelHome;
     private javax.swing.JPanel jPanelOurWork;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JPanel jPanelVideoDetails;
+    private javax.swing.JScrollPane jScrollPaneAboutUs;
+    private javax.swing.JScrollPane jScrollPaneContact;
+    private javax.swing.JScrollPane jScrollPaneHome;
+    private javax.swing.JScrollPane jScrollPaneOurWork;
+    private javax.swing.JScrollPane jScrollPaneVideoDetails;
+    private javax.swing.JTabbedPane jTabbedPaneMyApp;
     private javax.swing.JTable jTableOurWork;
-    private javax.swing.JTextArea jTextArea3;
-    private javax.swing.JTextArea jTextAreaAbout;
+    private javax.swing.JTextArea jTextAreaAboutUs;
     private javax.swing.JTextArea jTextAreaContact;
+    private javax.swing.JTextArea jTextAreaHome;
+    private javax.swing.JTextArea jTextAreaVideoDetails;
     // End of variables declaration//GEN-END:variables
 }
