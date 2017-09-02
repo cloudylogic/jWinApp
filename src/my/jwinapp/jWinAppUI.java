@@ -5,15 +5,20 @@
  */
 package my.jwinapp;
 import clsrestapi.AboutUs;
+import clsrestapi.CRAException;
 import clsrestapi.ContactInfo;
 import clsrestapi.OurWork;
 import clsrestapi.ShowCaseVideo;
+import clsrestapi.ClsRestApi;
 import javax.swing.JTextField;
 import javax.swing.DefaultCellEditor;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Desktop;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ListIterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -22,6 +27,7 @@ import java.util.ListIterator;
  */
 public class jWinAppUI extends javax.swing.JFrame {
 
+    private ClsRestApi cra;
     private AboutUs aboutUs;
     private ContactInfo contactInfo;
     private OurWork ourWork;
@@ -33,6 +39,11 @@ public class jWinAppUI extends javax.swing.JFrame {
      * Creates new form jWinAppUI
      */
     public jWinAppUI() {
+        try {
+            cra = new ClsRestApi("./cache/objects");
+        } catch (IOException | CRAException ex) {
+            Logger.getLogger(jWinAppUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
         initComponents();
         // I'm designing the video details panel in NetBeans, but I don't want it shown
         // as a Tab in the GUI, so remove it! I could just go steal the code after it's designed
@@ -45,14 +56,14 @@ public class jWinAppUI extends javax.swing.JFrame {
     }
     
     private void loadAbout(){
-        aboutUs = new AboutUs().load();
+        aboutUs = cra.getAboutUs();
         
         jTextAreaAboutUs.append(aboutUs.apiObj.aboutus.replace(". ", "." + System.lineSeparator() + System.lineSeparator()));
         
     }
     
     private void loadContact(){
-        contactInfo = new ContactInfo().load();
+        contactInfo = cra.getContactInfo();
         
         StringBuilder sb = new StringBuilder();
         
@@ -67,7 +78,7 @@ public class jWinAppUI extends javax.swing.JFrame {
     }
 
     private void loadOurWork(){
-        ourWork = new OurWork().load();
+        ourWork = cra.getOurWork();
         
         Object columnNames[] = { "Thumbnail", "Description" };
         DefaultTableModel model = new DefaultTableModel(columnNames, 0){
