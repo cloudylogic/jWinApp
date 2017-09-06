@@ -40,7 +40,7 @@ public class jWinAppUI extends javax.swing.JFrame {
      */
     public jWinAppUI() {
         try {
-            cra = new ClsRestApi("./cache/objects");
+            cra = new ClsRestApi("./cache", "JavaDesktop", "http://localhost:8000");
         } catch (IOException | CRAException ex) {
             Logger.getLogger(jWinAppUI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -98,8 +98,10 @@ public class jWinAppUI extends javax.swing.JFrame {
             }
         };
 
-        for(ListIterator<ShowCaseVideo> iter = ourWork.apiObj.videoList.listIterator(); iter.hasNext();){
-            ShowCaseVideo video = iter.next();
+        for (ShowCaseVideo video: ourWork.apiObj.videoList){
+//        for(ListIterator<ShowCaseVideo> iter = ourWork.apiObj.videoList.listIterator(); iter.hasNext();){
+//            ShowCaseVideo video = iter.next();
+            String resName = cra.getOurWorkResource(video.thumb);
             Object icon = new javax.swing.ImageIcon(getClass().getResource("/my/jwinapp/"+video.thumb+".png")); // NOI18N
             Object rowData[] = {icon, "<html><strong>" + video.type + "</strong><br>" + video.title};
             //jTableOurWork.setValueAt(icon, 0, 0);
